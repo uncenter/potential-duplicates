@@ -1,4 +1,4 @@
-import { Dic } from './dic';
+import { EXCLUDES, PUNCTUATION, SYNONYMS } from "./dic";
 
 export namespace Algo {
 	/**
@@ -10,20 +10,20 @@ export namespace Algo {
 		let ret = phrase.toLowerCase();
 
 		// eslint-disable-next-line no-restricted-syntax
-		for (const punct of Dic.punctuation) {
+		for (const punct of PUNCTUATION) {
 			ret = ret.replace(new RegExp(`\\${punct}`, 'g'), ' ');
 		}
 
 		// eslint-disable-next-line
-		for (const word in Dic.synonyms) {
+		for (const word in SYNONYMS) {
 			ret = ret.replace(
-				new RegExp((Dic.synonyms as any)[word].join('|'), 'gi'),
+				new RegExp((SYNONYMS as any)[word].join('|'), 'gi'),
 				word,
 			);
 		}
 
 		// eslint-disable-next-line no-restricted-syntax
-		for (const exclude of Dic.excludes) {
+		for (const exclude of EXCLUDES) {
 			ret = ret.replace(new RegExp(`\\b${exclude}\\s\\b`, 'g'), '');
 		}
 
