@@ -17,7 +17,7 @@ type ReactionType = (typeof presets)[number];
 function getReactions(inputs: string | string[]) {
 	const candidates = Array.isArray(inputs)
 		? inputs
-		: inputs.split(inputs.indexOf(',') >= 0 ? ',' : /\s+/g);
+		: inputs.split(inputs.includes(',') ? ',' : /\s+/g);
 
 	return candidates
 		.map((item) => item.trim())
@@ -56,15 +56,15 @@ export async function addReaction(
 				comment_id,
 				content,
 			});
-		} catch (err) {
+		} catch (error) {
 			core.debug(
-				`Adding reaction '${content}' to comment failed with: ${(err as Error).message}.`,
+				`Adding reaction '${content}' to comment failed with: ${(error as Error).message}.`,
 			);
-			throw err;
+			throw error;
 		}
 	});
 
-	Promise.all(deferreds).catch((e) => {
-		throw e;
+	Promise.all(deferreds).catch((error) => {
+		throw error;
 	});
 }

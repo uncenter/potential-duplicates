@@ -2,10 +2,10 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 
 import mustache from 'mustache';
-import { Algo } from './algo';
 
 import { isValidEvent, isValidTitle, formatTitle, getOctokit } from './util';
 import { addReaction } from './reaction';
+import { compare } from './algo';
 
 export async function run() {
 	const { context } = github;
@@ -26,7 +26,7 @@ export async function run() {
 		const issues = response.data.filter(
 			(i) => i.number !== payload.number && i.pull_request === undefined,
 		);
-		const threshold = parseFloat(core.getInput('threshold'));
+		const threshold = Number.parseFloat(core.getInput('threshold'));
 
 		const formattedTitle = formatTitle(title);
 		if (formattedTitle === '') {
@@ -38,13 +38,13 @@ export async function run() {
 
 		// eslint-disable-next-line no-restricted-syntax
 		for (const issue of issues) {
-			const accuracy = Algo.compare(
+			const accuracy = compare(
 				formatTitle(issue.title),
 				formattedTitle,
 			);
 
 			core.debug(
-				`${issue.title} ~ ${title} = ${parseFloat(
+				`${issue.title} ~ ${title} = ${Number.parseFloat(
 					(accuracy * 100).toFixed(2),
 				)}%`,
 			);
@@ -53,12 +53,12 @@ export async function run() {
 				duplicates.push({
 					number: issue.number,
 					title: issue.title,
-					accuracy: parseFloat((accuracy * 100).toFixed(2)),
+					accuracy: Number.parseFloat((accuracy * 100).toFixed(2)),
 				});
 			}
 		}
 
-		if (duplicates.length) {
+		if (duplicates.length > 0) {
 			const label = core.getInput('label');
 			if (label) {
 				await octokit.rest.issues.addLabels({

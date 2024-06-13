@@ -11,11 +11,11 @@ export function isValidEvent(event: string, actions?: string | string[]) {
 	const { context } = github;
 	const { payload } = context;
 	if (event === context.eventName) {
-		if (actions == null) {
+		if (actions == undefined) {
 			return true;
 		}
 		if (Array.isArray(actions)) {
-			return actions.some((action) => action === payload.action);
+			return actions.includes(payload.action!);
 		}
 
 		return actions === payload.action;
@@ -40,11 +40,12 @@ export function formatTitle(title: string) {
 	const exclude = core.getInput('exclude');
 	if (exclude) {
 		return exclude
-			.split(/[\s\n]+/)
+			.split(/\s+/)
 			.map((keyword) => keyword.trim())
 			.filter((keyword) => keyword.length > 0)
 			.reduce(
-				(memo, keyword) => memo.replace(new RegExp(keyword, 'igm'), ''),
+				(memo, keyword) =>
+					memo.replaceAll(new RegExp(keyword, 'igm'), ''),
 				title,
 			)
 			.replace(/\s+/, ' ')
