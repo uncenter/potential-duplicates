@@ -36,7 +36,6 @@ export async function run() {
 			return;
 		}
 
-		// eslint-disable-next-line no-restricted-syntax
 		for (const issue of issues) {
 			const accuracy = compare(
 				formatTitle(issue.title),
