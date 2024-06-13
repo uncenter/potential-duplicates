@@ -1,18 +1,22 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "noImplicitAny": true,
-    "noEmitOnError": true,
-    "noUnusedLocals": true,
-    "strictNullChecks": true,
-    "resolveJsonModule": true,
-    "experimentalDecorators": true,
-    "outDir": "lib",
-    "target": "es5",
-    "lib": ["dom", "es2015"]
-  },
-  "include": ["src/**/*.ts"]
+	"compilerOptions": {
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"target": "ES2022",
+		"verbatimModuleSyntax": true,
+		"allowJs": true,
+		"resolveJsonModule": true,
+		"moduleDetection": "force",
+		"moduleResolution": "Bundler",
+		"module": "ESNext",
+		"noEmit": true,
+		"allowSyntheticDefaultImports": true,
+		"baseUrl": "src",
+		"paths": {
+			"~/*": ["*"]
+		}
+	},
+	"include": ["**/*.ts"],
+	"exclude": ["node_modules", "**/node_modules/*"]
 }
