@@ -29,7 +29,27 @@ jobs:
       - uses: ./
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          filter: |
-            Request ** icon
-            Add ** icon
-            ** icon **
+          exclude: |
+            adding
+            add
+            creating
+            create
+            icons
+            icon
+            logos
+            logo
+            missing
+            miss
+            needing
+            need
+            new
+            please
+            requesting
+            request
+            project
+            updated
+            outdated
+            brand
+            assets
+            for
+            from
