@@ -3,22 +3,18 @@ import * as github from '@actions/github';
 
 import mustache from 'mustache';
 
-import { isValidEvent, isValidTitle, formatTitle, getOctokit } from './util';
+import { isValidEvent, isFilteredTitle, cleanTitle, getOctokit } from './util';
 import { addReaction } from './reaction';
 import { compare } from './algo';
 
 export async function run() {
 	const { context } = github;
 	const payload = context.payload.issue;
-	console.log({
-		payload,
-		isValidEvent: isValidEvent('issues', ['opened', 'edited']),
-		isValidTitle: isValidTitle(payload?.title),
-	});
+
 	if (
 		payload &&
 		isValidEvent('issues', ['opened', 'edited']) &&
-		isValidTitle(payload.title)
+		!isFilteredTitle(payload.title)
 	) {
 		const octokit = getOctokit();
 		const duplicates = [];
@@ -28,34 +24,32 @@ export async function run() {
 		});
 		console.log(response);
 
-		const { title } = payload;
 		const issues = response.data.filter(
 			(i) => i.number !== payload.number && i.pull_request === undefined,
 		);
 		const threshold = Number.parseFloat(core.getInput('threshold'));
 
-		const formattedTitle = formatTitle(title);
-		if (formattedTitle === '') {
-			core.info(
-				`Issue title "${title}" is empty after excluding keywords`,
+		const title = cleanTitle(payload.title);
+		if (title === '') {
+			console.log(
+				`Issue title "${title}" is empty after excluding keywords.`,
 			);
 			return;
 		}
 
 		for (const issue of issues) {
-			const accuracy = compare(formatTitle(issue.title), formattedTitle);
+			const similarity = compare(cleanTitle(issue.title), title);
+			const percentage = (similarity * 100).toFixed(2);
 
 			console.log(
-				`${issue.title} ~ ${title} = ${Number.parseFloat(
-					(accuracy * 100).toFixed(2),
-				)}%`,
+				`${issue.title} ~ ${title} = ${Number.parseFloat(percentage)}%`,
 			);
 
-			if (accuracy >= threshold) {
+			if (similarity >= threshold) {
 				duplicates.push({
 					number: issue.number,
 					title: issue.title,
-					accuracy: Number.parseFloat((accuracy * 100).toFixed(2)),
+					accuracy: Number.parseFloat(percentage),
 				});
 			}
 		}

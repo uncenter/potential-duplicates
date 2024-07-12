@@ -23,7 +23,7 @@ export function isValidEvent(event: string, actions?: string | string[]) {
 	return false;
 }
 
-export function isValidTitle(title: string) {
+export function isFilteredTitle(title: string) {
 	const filter = core.getInput('filter');
 	if (filter) {
 		const filters = filter
@@ -31,12 +31,12 @@ export function isValidTitle(title: string) {
 			.map((str) => str.trim())
 			.filter((str) => str.length > 0);
 		core.info(`filters: ${JSON.stringify(filters, null, 2)}`);
-		return !anymatch(filters, title, { nocase: true } as any);
+		return anymatch(filters, title, { nocase: true } as any);
 	}
-	return true;
+	return false;
 }
 
-export function formatTitle(title: string) {
+export function cleanTitle(title: string) {
 	const exclude = core.getInput('exclude');
 	if (exclude) {
 		return exclude
