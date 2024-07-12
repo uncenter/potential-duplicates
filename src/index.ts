@@ -37,12 +37,9 @@ export async function run() {
 		}
 
 		for (const issue of issues) {
-			const accuracy = compare(
-				formatTitle(issue.title),
-				formattedTitle,
-			);
+			const accuracy = compare(formatTitle(issue.title), formattedTitle);
 
-			core.debug(
+			console.log(
 				`${issue.title} ~ ${title} = ${Number.parseFloat(
 					(accuracy * 100).toFixed(2),
 				)}%`,
