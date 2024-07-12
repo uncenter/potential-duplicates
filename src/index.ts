@@ -10,6 +10,11 @@ import { compare } from './algo';
 export async function run() {
 	const { context } = github;
 	const payload = context.payload.issue;
+	console.log({
+		payload,
+		isValidEvent: isValidEvent('issues', ['opened', 'edited']),
+		isValidTitle: isValidTitle(payload?.title),
+	});
 	if (
 		payload &&
 		isValidEvent('issues', ['opened', 'edited']) &&
@@ -21,6 +26,7 @@ export async function run() {
 			...context.repo,
 			state: core.getInput('state') as 'all' | 'open' | 'closed',
 		});
+		console.log(response);
 
 		const { title } = payload;
 		const issues = response.data.filter(
